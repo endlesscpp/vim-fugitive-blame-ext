@@ -3,9 +3,9 @@ function! s:log_message(commit)
 		return '(Not Committed Yet)'
 	endif
 	if !has_key(s:log_messages, a:commit)
-		let cmd_output = system('git --git-dir='.b:git_dir.' show --no-show-signature --oneline '.a:commit)
+		let cmd_output = system('git --git-dir='.b:git_dir.' log --format=%s -n 1 '.a:commit)
 		let first_line = split(cmd_output, '\n')[0]
-		let s:log_messages[a:commit] = substitute(first_line, '[a-z0-9]\+ ', '', '')
+		let s:log_messages[a:commit] = first_line
 	endif
 	return s:log_messages[a:commit]
 endfunction
@@ -32,7 +32,7 @@ endfunction
 function! s:show_log_message()
 	let line = substitute(getline('.'), '\v^\^?([a-z0-9]+).*$', '\1', '')
 	redraw
-	echo s:truncate_message(s:log_message(line))
+    echo s:truncate_message(s:log_message(line))
 endfunction
 
 let s:log_messages = {}
